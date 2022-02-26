@@ -35,103 +35,33 @@ New Data: prison
 
 ![image](https://user-images.githubusercontent.com/65502025/155845603-3b24b497-696e-48da-be72-3e3d8676d1fc.png)
 
-Holiday Tourism Data
+## Holiday Tourism Data
 * "Australian domestic holiday nights" Time series plots
   * autoplot, gg_season, gg_subseries
 * Cross Correlation: "Half-hourly electricity demand: Victoria, Australia"
   * Demand, temperature
 * GGally
+* Auto-correlation - checking for lag one time period ago
+* (ACF) auto correlation function
+* White Noise
+* 
 
 ![image](https://user-images.githubusercontent.com/65502025/155845625-f84e0746-f1f3-4662-8b9d-d6393ebe1757.png)
 
 ![image](https://user-images.githubusercontent.com/65502025/155845835-7d54db60-a14e-452f-8d6f-4837cffce395.png)
 
+![image](https://user-images.githubusercontent.com/65502025/155846107-f9bab63d-0276-45c7-8bda-c790dcb95ab7.png)
 
-# Cross-correlation
-vic_elec %>%
-  filter(year(Time) == 2014) %>%
-  autoplot(Demand) +
-  xlab("Year: 2014") + ylab(NULL) +
-  ggtitle("Half-hourly electricity demand: Victoria, Australia")
 
-vic_elec %>%
-  filter(year(Time) == 2014) %>%
-  autoplot(Temperature) +
-  xlab("Year: 2014") + ylab(NULL) +
-  ggtitle("Half-hourly temperatures: Melbourne, Australia")
 
-vic_elec %>%
-  filter(year(Time) == 2014) %>%
-  ggplot(aes(x = Temperature, y = Demand)) +
-  geom_point() +
-  ylab("Demand (GW)") + xlab("Temperature (Celsius)")
+## Code to play with a time series
+US Employment
 
-visitors <- tourism %>%
-  group_by(State) %>%
-  summarise(Trips = sum(Trips))
+![image](https://user-images.githubusercontent.com/65502025/155846163-4be97621-d9df-4ca6-a32d-b656575a1bb5.png)
 
-visitors %>%
-  ggplot(aes(x = Quarter, y = Trips)) +
-  geom_line() +
-  facet_grid(vars(State), scales = "free_y") +
-  ylab("Number of visitor nights each quarter (millions)")
+![image](https://user-images.githubusercontent.com/65502025/155846175-b96f872f-e087-4810-a920-2fa7714c6678.png)
 
-visitors %>%
-  spread(State, Trips) %>%
-  GGally::ggpairs(columns = 2:9)
+![image](https://user-images.githubusercontent.com/65502025/155846196-4a6f6b63-0eae-4e48-9921-734c1f4efa68.png)
 
-# Auto-correlation (self correlation)
-recent_production <- aus_production %>%
-  filter(year(Quarter) >= 1992)
-
-recent_production %>% gg_lag(Beer, geom="point") 
-#current(y axis) vs previous quarter(x-axis) a year ago
-#explains if time series related to it's self one time period ago
-
-recent_production %>% ACF(Beer, lag_max = 9)
-#(ACF) auto correlation function
-
-recent_production %>% ACF(Beer) %>% autoplot()
-
-# Trends and seasonality affect ACF
-a10 %>% ACF(Cost, lag_max = 48) %>% autoplot()
-
-# When there is no auto-correlation
-set.seed(30)
-y <- tsibble(sample = 1:50, wn = rnorm(50), index = sample)
-y %>% autoplot(wn) + ggtitle("White noise")
-
-y %>% ACF(wn) %>% autoplot()
-
-# Code to play with a time series
-help(us_employment)
-
-#before you start modeling, filter
-us_retail_employment <- us_employment %>%
-  filter(year(Month) >= 1990, Title == "Retail Trade") %>%
-  select(-Series_ID)
-
-us_retail_employment
-
-#do an autoplot to view
-us_retail_employment %>%
-  autoplot(Employed) +
-  xlab("Year") + ylab("Persons (thousands)") +
-  ggtitle("Total employment in US retail")
-
-frequency(us_retail_employment)
-
-us_retail_employment %>% gg_season(Employed, labels = "both") +
-  ylab("Persons (thousands)") +
-  ggtitle("Seasonal plot")
-
-us_retail_employment %>%
-  gg_subseries(Employed) +
-  ylab("Persons (thousands)") +
-  ggtitle("Seasonal subseries plot")
-
-us_retail_employment %>% ACF(Employed) %>% autoplot() +
-  xlab("Lag")
-
-us_retail_employment %>% gg_lag(Employed, geom="point")
+![image](https://user-images.githubusercontent.com/65502025/155846206-1ef67f3d-ca81-47b1-949e-f5685e68b71e.png)
 
