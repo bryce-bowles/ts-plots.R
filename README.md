@@ -1,113 +1,51 @@
 # ts-plots.R
 ts-plots.R
 
-install.packages("fpp3")
-library("fpp3")
+Packages: fpp3, readr
 
-# tsibble objects
+* tsibble objects
+* Data: PBS (tsibble object) containing monthly data on Australia medicare prescription data
+* Filtering (Month, Concession, Type, Cost)
+* Summarise (all costs in a given month)
+* Mutate to create a new cost column
 
-library(tsibble)
-y <- tsibble(Year = 2015:2019, Observation = c(123,39,78,52,110), index = Year)
+New Data: prison
+* Date conversion
+* Tsibble object Date conversion 
 
-y
 
-# PBS is a tsibble object containing monthly
-# data on Medicare Australia prescription data
-PBS
+## Time series plots
+* Airport Data
+* Autoplot of Cost (Antidiabetic drug sales)
+* Checking for seasonality
+* Seasonal subseries plot
+* Demand per day, week, year etc. 
 
-# We can use filter to choose just A10 prescriptions
-# This is one Anatomical Therapeutic Chemical (ATC) index
-PBS %>%
-  filter(ATC2=="A10")
+![image](https://user-images.githubusercontent.com/65502025/155845275-5b63dcc4-3a7e-4fac-9e72-d49f171bdb97.png)
+  
+![image](https://user-images.githubusercontent.com/65502025/155845284-a4b498fa-e7db-4e99-98d0-eebabf4c0f95.png)
 
-# We can use the select function to choose certain columns
-PBS %>%
-  filter(ATC2=="A10") %>%
-  select(Month, Concession, Type, Cost)
+![image](https://user-images.githubusercontent.com/65502025/155845506-6e3c8a48-5f50-4c36-a312-bf10a8b76b97.png)
 
-# We can use the summarise function to get the sum  
-# of all costs in a given month
-PBS %>%
-  filter(ATC2=="A10") %>%
-  select(Month, Concession, Type, Cost) %>%
-  summarise(TotalC = sum(Cost))
+![image](https://user-images.githubusercontent.com/65502025/155845552-18080323-bf7b-4f71-bad4-f61a3e7b2b9f.png)
 
-# We can use the mutate function to create a new
-# column called cost
-PBS %>%
-  filter(ATC2=="A10") %>%
-  select(Month, Concession, Type, Cost) %>%
-  summarise(TotalC = sum(Cost)) %>%
-  mutate(Cost = TotalC/1e6)
+![image](https://user-images.githubusercontent.com/65502025/155845586-d62f19e4-734a-4805-ada5-ac787a3af9e9.png)
 
-# Lastly, we can assign the res
-PBS %>%
-  filter(ATC2=="A10") %>%
-  select(Month, Concession, Type, Cost) %>%
-  summarise(TotalC = sum(Cost)) %>%
-  mutate(Cost = TotalC/1e6) -> a10
+![image](https://user-images.githubusercontent.com/65502025/155845594-bcfeb0d0-3337-4cbd-9cf4-0cac3964fcd8.png)
 
-# Read a csv file
-install.packages("readr")
-library(readr)
-prison <- readr::read_csv("https://OTexts.com/fpp3/extrafiles/prison_population.csv")
+![image](https://user-images.githubusercontent.com/65502025/155845603-3b24b497-696e-48da-be72-3e3d8676d1fc.png)
 
-# Create a tsibble object turning the date starting a quarter into quarters and choosing certain columns
-prison <- prison %>%
-  mutate(quarter = yearquarter(date)) %>%
-  select(-date) %>%
-  as_tsibble(key = c(state, gender, legal, indigenous), index = quarter)
+Holiday Tourism Data
+* "Australian domestic holiday nights" Time series plots
+  * autoplot, gg_season, gg_subseries
+* Cross Correlation: "Half-hourly electricity demand: Victoria, Australia"
+  * Demand, temperature
+* GGally
 
-prison
+![image](https://user-images.githubusercontent.com/65502025/155845625-f84e0746-f1f3-4662-8b9d-d6393ebe1757.png)
 
-# Time series plots
-melsyd_economy <- ansett %>%
-  filter(Airports == "MEL-SYD", Class=="Economy")
-melsyd_economy %>%
-  autoplot(Passengers) +
-  labs(title = "Ansett economy class passengers", subtitle = "Melbourne-Sydney") +
-  xlab("Year")
+![image](https://user-images.githubusercontent.com/65502025/155845835-7d54db60-a14e-452f-8d6f-4837cffce395.png)
 
-a10 %>% autoplot(Cost) +
-  ggtitle("Antidiabetic drug sales") +
-  ylab("$ million") + xlab("Year")
-
-# Looking for seasonanility
-a10 %>% gg_season(Cost, labels = "both") +
-  ylab("$ million") +
-  ggtitle("Seasonal plot: antidiabetic drug sales")
-
-a10 %>%
-  gg_subseries(Cost) +
-  ylab("$ million") +
-  xlab("Year") +
-  ggtitle("Seasonal subseries plot: antidiabetic drug sales")
-
-#demand per day, week, year etc. 
-vic_elec %>% gg_season(Demand, period="day") + theme(legend.position = "none")
-
-vic_elec %>% gg_season(Demand, period="week") + theme(legend.position = "none")
-
-vic_elec %>% gg_season(Demand, period="year")
-
-holidays <- tourism %>%
-  filter(Purpose == "Holiday") %>%
-  group_by(State) %>%
-  summarise(Trips = sum(Trips))
-
-holidays
-
-holidays %>% autoplot(Trips) +
-  ylab("thousands of trips") + xlab("Year") +
-  ggtitle("Australian domestic holiday nights")
-
-holidays %>% gg_season(Trips) +
-  ylab("thousands of trips") +
-  ggtitle("Australian domestic holiday nights")
-
-holidays %>%
-  gg_subseries(Trips) + ylab("thousands of trips") +
-  ggtitle("Australian domestic holiday nights")
 
 # Cross-correlation
 vic_elec %>%
