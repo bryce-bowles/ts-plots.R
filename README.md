@@ -1,7 +1,8 @@
 # Time Series Plots .R
-
+Time Series analysis concepts using examples in r. Multiple data sets were used to demonstrate reading in data, filtering, date conversion, plotting (autoplot, gg_season, gg_subseries, GGalley), seasonality, cross correlation, autocorrelation, ACF, lag, white noise etc. 
 
 Packages: fpp3, readr
+
 
 * tsibble objects
 * Data: PBS (tsibble object) containing monthly data on Australia medicare prescription data
