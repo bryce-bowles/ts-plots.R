@@ -3,14 +3,12 @@ Time Series analysis concepts using examples in r. Multiple data sets were used 
 
 Packages: fpp3, readr
 
-
+Data Preprocessing:
 * tsibble objects
 * Data: PBS (tsibble object) containing monthly data on Australia medicare prescription data
 * Filtering (Month, Concession, Type, Cost)
 * Summarise (all costs in a given month)
 * Mutate to create a new cost column
-
-New Data: prison
 * Date conversion
 * Tsibble object Date conversion 
 
